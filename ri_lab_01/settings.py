@@ -34,7 +34,12 @@ USER_AGENTS = [
 #USER_AGENT = 'ri_lab_01 (+http://www.yourdomain.com)'
 
 # Obey robots.txt rules
-ROBOTSTXT_OBEY = False
+ROBOTSTXT_OBEY = True
+
+LOG_LEVEL = 'INFO'  # to only display errors
+LOG_FORMAT = '%(levelname)s: %(message)s'
+LOG_FILE = 'log.txt'
+
 
 # Configure maximum concurrent requests performed by Scrapy (default: 16)
 #CONCURRENT_REQUESTS = 32

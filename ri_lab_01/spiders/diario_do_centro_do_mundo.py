@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 import scrapy
 import json
-import re
 import pdb
 
 from ri_lab_01.items import RiLab01Item
@@ -20,18 +19,19 @@ class DiarioDoCentroDoMundoSpider(scrapy.Spider):
         self.start_urls = list(data.values())
 
     def parse(self, response):
-        response = response.css('div.td_with_ajax_pagination')[0].css('script *::text').get()
-        td_atts = json.loads(re.findall("{.*}", response)[0])
-        td_atts["limit"] = 20
-
-        body = {"td_atts": td_atts, "td_block_id": "td_uid_2_5ca3920f6fbd3", "td_column_number": "3",
-                "td_current_page": "1", "block_type": "td_block_4", "td_filter_value": "",
-                "td_user_action": "", "action": "td_ajax_block"}
-
-        yield scrapy.FormRequest("https://www.diariodocentrodomundo.com.br/wp-admin/admin-ajax.php",
-                                 callback=self.news_parse, formdata=body)
+        self.logger.info("response_url " + response.url)
+        news_url = response.css('h3.td-module-title a::attr(href)').get()
+        yield response.follow(news_url, callback=self.news_parse,
+                              meta={'news_number': 2})
 
     def news_parse(self, response):
-        print(response.url)
-        pdb.set_trace()
+        news_number = response.meta.get('news_number')
 
+        if news_number != 0:
+            self.logger.info("response_url " + response.url)
+            self.logger.info("meta " + str(response.meta.get('news_number')))
+            yield {"response": response.url}
+
+            news_url = response.css('div.td-post-next-prev-content a::attr(href)').get()
+            yield response.follow(news_url, callback=self.news_parse,
+                                  meta={'news_number': news_number - 1})
