@@ -9,7 +9,6 @@ import scrapy
 
 
 class RiLab01Item(scrapy.Item):
-    _id = scrapy.Field()
     title = scrapy.Field()
     sub_title = scrapy.Field()
     author = scrapy.Field()
@@ -17,6 +16,7 @@ class RiLab01Item(scrapy.Item):
     section = scrapy.Field()
     text = scrapy.Field()
     url = scrapy.Field()
+
 
 class RiLab01CommentItem(scrapy.Item):
     id_article = scrapy.Field()
