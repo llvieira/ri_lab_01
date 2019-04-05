@@ -12,7 +12,7 @@ class DiarioDoCentroDoMundoSpider(scrapy.Spider):
     start_urls = []
 
     # the amount of news we should get per page.
-    NEWS_NUMBER_PER_PAGE = 2
+    NEWS_NUMBER_PER_PAGE = 30
 
     def __init__(self, *a, **kw):
         super(DiarioDoCentroDoMundoSpider, self).__init__(*a, **kw)
@@ -21,8 +21,8 @@ class DiarioDoCentroDoMundoSpider(scrapy.Spider):
         self.start_urls = list(data.values())
 
     """
-    In this method, we get the first news of any of the pages in
-    seeds/diario_do_centro_do_mundo.json file.
+    In this method, we get the first news from any of the pages in
+    seeds/diario_do_centro_do_mundo.json file that we're currently crawling on.
     
     With the first news in hand, we can scrape it to get other different news
     from the "Artigo anterior" reference. We can accomplish this by using the 
@@ -75,7 +75,7 @@ class DiarioDoCentroDoMundoSpider(scrapy.Spider):
         news_date = self.get_datetime(date)
         threshold_date = datetime.datetime(2018, 1, 1)
 
-        # check if the news is up to date.
+        # checking if the news is up to date.
         if news_date > threshold_date:
             url = response.url
             news_date = self.format_date(news_date)
@@ -90,7 +90,7 @@ class DiarioDoCentroDoMundoSpider(scrapy.Spider):
                 donation_paragraph = response.css('p.donation_paragraph::text').get()
 
                 if text[-1] == donation_paragraph:
-                    # remove denotation paragraph.
+                    # remove donation paragraph.
                     del text[-1]
 
             # NOTE: we don't have the sub_title information in the news.
@@ -98,7 +98,7 @@ class DiarioDoCentroDoMundoSpider(scrapy.Spider):
                                text=text, url=url, section=category)
 
     """
-    Get tne news category based on its URL.
+    Get the news category based on its URL.
     """
     def get_news_category(self, url):
         return url.split('/')[3].capitalize()
